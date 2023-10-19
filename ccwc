@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+
+import argparse
+import re
+import fileinput
+
+def count_bytes(filename):
+    try:
+        with open(filename, 'rb') as file:
+            byte_count = len(file.read())
+            return byte_count
+    except FileNotFoundError:
+        return -1  # Return -1 to indicate file not found
+
+def count_lines(filename):
+    try:
+        with open(filename, 'r') as file:
+            line_count = sum(1 for line in file)
+            return line_count
+    except FileNotFoundError:
+        return -1  # Return -1 to indicate file not found
+
+def count_words(filename):
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+            word_count = len(re.findall(r'\w+', content))
+            return word_count
+    except FileNotFoundError:
+        return -1  # Return -1 to indicate file not found
+
+def count_characters(filename):
+    try:
+        with open(filename, 'r') as file:
+            character_count = len(file.read())
+            return character_count
+    except FileNotFoundError:
+        return -1  # Return -1 to indicate file not found
+
+def print_result(label, count):
+    if count == -1:
+        print(f"Error: File '{args.filename}' not found")
+        return -1
+    else:
+        print(f"{label} count: {count}")
+        return count
+
+parser = argparse.ArgumentParser(description='ccwc - Count bytes or lines in a file')
+parser.add_argument('-c', '--bytes', action='store_true', help='Display the byte count')
+parser.add_argument('-l', '--lines', action='store_true', help='Display the line count')
+parser.add_argument('-w', '--words', action='store_true', help='Display the word count')
+parser.add_argument('-m', '--characters', action='store_true', help='Display the word count')
+
+parser.add_argument('filename', help='File to count for')
+
+args = parser.parse_args()
+if args.bytes == False and args.lines == False and args.words == False and args.characters == False:
+    count = count_bytes(args.filename)
+    label = 'Byte'
+    val = print_result(label, count)
+    count = count_lines(args.filename)
+    label = 'Line'
+    val = print_result(label, count)
+    count = count_words(args.filename)
+    label = 'Word'
+    val = print_result(label, count)
+    count = count_characters(args.filename)
+    label = 'Character'
+    val = print_result(label, count)
+
+val = 0
+
+if args.bytes:
+    count = count_bytes(args.filename)
+    label = 'Byte'
+    val = print_result(label, count)
+if args.lines and val != -1:
+    count = count_lines(args.filename)
+    label = 'Line'
+    val = print_result(label, count)
+if args.words and val != -1:
+    count = count_words(args.filename)
+    label = 'Word'
+    val = print_result(label, count)
+if args.characters and val != -1:
+    count = count_characters(args.filename)
+    label = 'Character'
+    val = print_result(label, count)
